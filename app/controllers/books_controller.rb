@@ -2,18 +2,18 @@ class BooksController < ApplicationController
 	def top
   end
   def index
-    @books = Book.all.order("id ASC")
+    @books = Book.all
     @book = Book.new
   end
 
   def create
-    book = Book.new(book_params)
-    if book.save
+  	@books = Book.all
+    @book = Book.new(book_params)
+    if @book.save
     flash[:success] = "successfully"
-    redirect_to book_path(book)
+    redirect_to book_path(@book)
     else
-    flash[:blank] = "error"
-    redirect_to books_path
+    render "index"
     end
   end
 
@@ -27,8 +27,13 @@ class BooksController < ApplicationController
 
   def update
     book = Book.find(params[:id])
-    flash[:success] = "successfully" if book.update(book_params)
+    if book.update(book_params)
+    flash[:success] = "successfully" 
     redirect_to book_path(params[:id])
+    else
+    @book = book
+    render "edit"
+    end
   end
 
   def destroy
